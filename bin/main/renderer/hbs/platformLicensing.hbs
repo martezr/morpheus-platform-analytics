@@ -1,0 +1,34 @@
+<div id="hypervisor-inventory-report">
+	<table>
+		<thead>
+		<th>Item</th>
+		<th>Quantity</th>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Discovered Workloads</td>
+				<td>{{reportdata.header.0.dataMap.totalDiscoveredWorkloads}}</td>	
+			</tr>
+			<tr>
+				<td>Managed Workloads</td>
+				<td>{{reportdata.header.0.dataMap.totalManagedWorkloads}}</td>
+			</tr>
+			<tr>
+				<td>IaC Workloads</td>
+				<td>{{reportdata.header.0.dataMap.totalIaCWorkloads}}</td>	
+			</tr>
+			<tr>
+				<td>Kubernetes Workers</td>
+				<td>{{reportdata.header.0.dataMap.totalKubeWorkers}}</td>
+			</tr>
+			<tr>
+				<td>Automation Executions</td>
+				<td>{{reportdata.header.0.dataMap.totalExecutions}}</td>
+			</tr>
+			<tr>
+				<td>XaaS Instances</td>
+				<td>{{reportdata.header.0.dataMap.totalXaaSInstances}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,27 @@
+<div id="hypervisor-inventory-report">
+<script nonce="{{webnonce}}"  src="{{asset "/logicHelper.js"}}" ></script>
+
+<div class="analytics-data-view">
+<h2>Integrations</h2>
+<table>
+	<thead>
+	<th>Name</th>
+	<th>Plugin</th>
+	<th>Enabled</th>
+    <th>Integration</th>
+    <th>Category</th>
+	</thead>
+	<tbody>
+		{{#each reportdata.main}}
+			<tr>
+				<td>{{dataMap.name}}</td>
+				<td>{{dataMap.plugin}}</td>
+				<td>{{dataMap.enabled}}</td>
+                <td>{{dataMap.integration}}</td>
+                <td>{{dataMap.category}}</td>
+			</tr>
+		{{/each}}
+	</tbody>
+</table>
+</div>
+</div>
