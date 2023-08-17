@@ -1,7 +1,6 @@
 name: Build Plugin JAR File
 permissions:
-  contents: read
-  packages: write
+  contents: write
 
 on:
   push:
