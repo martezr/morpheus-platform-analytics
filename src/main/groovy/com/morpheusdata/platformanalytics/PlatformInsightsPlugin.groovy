@@ -21,8 +21,8 @@ class PlatformInsightsPlugin extends Plugin {
 		this.pluginProviders.put(platformLicensingReportProvider.code, platformLicensingReportProvider)
 
 		// Morpheus Platform Usage Report
-		PlatformUsageReportProvider platformUsageReportProvider = new PlatformUsageReportProvider(this, morpheus)
-		this.pluginProviders.put(platformUsageReportProvider.code, platformUsageReportProvider)
+		//PlatformUsageReportProvider platformUsageReportProvider = new PlatformUsageReportProvider(this, morpheus)
+		//this.pluginProviders.put(platformUsageReportProvider.code, platformUsageReportProvider)
 
 		this.setName("Platform Insights")
 		this.setDescription("Morpheus platform insights plugin")

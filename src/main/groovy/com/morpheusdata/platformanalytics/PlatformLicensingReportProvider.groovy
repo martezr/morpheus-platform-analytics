@@ -92,17 +92,18 @@ class PlatformLicensingReportProvider extends AbstractReportProvider {
 		Long managedWorkloads = 0
 		Long iacWorkloads = 0
 		Long kubernetesWorkers = 0
+		Long kubernetesWorkloads = 0
 		Long xaasWorkloads = 0
 		Long automationExecutions = 0
 
 		try {
 			// Create a read-only database connection
 			dbConnection = morpheus.report.getReadOnlyDatabaseConnection().blockingGet()
-			// Evaluate if a search filter or phrase has been defined
+
 			results = new Sql(dbConnection).rows("SELECT * FROM compute_server INNER JOIN compute_server_type ON compute_server.compute_server_type_id=compute_server_type.id WHERE compute_server.compute_server_type_id in (select id from compute_server_type where managed = 0 and container_hypervisor = 0 and vm_hypervisor = 0 );")
 			kubeworkers = new Sql(dbConnection).rows("SELECT * FROM compute_server INNER JOIN compute_server_type ON compute_server.compute_server_type_id=compute_server_type.id WHERE compute_server.compute_server_type_id in (select id from compute_server_type where node_type = 'kube-worker');")
-			instances = new Sql(dbConnection).rows("SELECT instance.id, provision_type.code, instance.name, instance_type_layout.provision_type_id as provision_data, compute_zone.name as cloud_name, account.name as account_name FROM instance LEFT JOIN compute_zone on instance.provision_zone_id = compute_zone.id LEFT JOIN account ON instance.account_id = account.id LEFT JOIN instance_type_layout ON instance.layout_id = instance_type_layout.id LEFT JOIN provision_type ON instance_type_layout.provision_type_id = provision_type.id  order by id asc;")
-			apps = new Sql(dbConnection).rows("SELECT * FROM app INNER JOIN app_template_type ON app.template_type_id=app_template_type.id WHERE app.template_type_id in (select id from app_template_type where code = 'terraform' OR code = 'arm' OR code = 'cloudFormation');")
+			instances = new Sql(dbConnection).rows("SELECT instance.id, provision_type.code, instance.name, instance_type_layout.provision_type_id as provision_data FROM instance LEFT JOIN instance_type_layout ON instance.layout_id = instance_type_layout.id LEFT JOIN provision_type ON instance_type_layout.provision_type_id = provision_type.id order by id asc;")
+			apps = new Sql(dbConnection).rows("SELECT * FROM app INNER JOIN app_template_type ON app.template_type_id=app_template_type.id WHERE app.template_type_id in (select id from app_template_type where code != 'morpheus');")
 			taskExecutions = new Sql(dbConnection).rows("SELECT * from job_execution WHERE created_by_id IS NOT NULL AND (start_date BETWEEN (CURDATE() - INTERVAL 365 DAY) AND CURDATE()) order by start_date desc;")
 			distributedWorkers = new Sql(dbConnection).rows("SELECT * FROM distributed_worker;")
 		} finally {
@@ -116,11 +117,9 @@ class PlatformLicensingReportProvider extends AbstractReportProvider {
 			totalWorkloads++
 			switch(resultRow.discovered) {
 				case false:
-					//log.info "Workload Name: ${resultRow.name} - Status: ${resultRow.discovered}"
 					managedWorkloads++
 					break;
 				case true:
-					//log.info "Workload Name: ${resultRow.name} - Status: ${resultRow.discovered}"
 					discoveredWorkloads++
 					break;
 			}
@@ -134,14 +133,54 @@ class PlatformLicensingReportProvider extends AbstractReportProvider {
 		}
 
 		instances.each { instance ->
-			if (instance.code == "workflow"){
-				xaasWorkloads++
-			} else {
-				managedWorkloads++
+			switch(instance.code) {            					
+				case "workflow": 
+					xaasWorkloads++
+					break; 
+				case "cloudFormation": 
+					iacWorkloads++ 
+					break; 
+				case "terraform": 
+					iacWorkloads++ 
+					break; 
+				case "arm": 
+					iacWorkloads++ 
+					break;
+				case "kubernetes": 
+					kubernetesWorkloads++ 
+					break;
+				case "helm": 
+					kubernetesWorkloads++ 
+					break; 
+				default:
+					managedWorkloads++
+					break;
 			}
 		}
 
-		Map<String,Object> data = [totalDiscoveredWorkloads: discoveredWorkloads, totalManagedWorkloads: managedWorkloads, totalIaCWorkloads: apps.size(), totalKubeWorkers: kubeworkers.size(), totalExecutions: taskExecutions.size(), totalXaaSInstances: xaasWorkloads]
+		apps.each { app ->
+			switch(app.code) {            					
+				case "arm": 
+					iacWorkloads++ 
+					break; 
+				case "cloudFormation": 
+					iacWorkloads++ 
+					break; 
+				case "terraform": 
+					iacWorkloads++ 
+					break; 
+				case "kubernetes": 
+					kubernetesWorkloads++ 
+					break;
+				case "helm": 
+					kubernetesWorkloads++ 
+					break; 
+				default: 
+					break; 
+			}		
+		}
+
+		Map<String,Object> data = [totalDiscoveredWorkloads: discoveredWorkloads, totalManagedWorkloads: managedWorkloads, totalIaCWorkloads: iacWorkloads, totalKubeWorkers: kubeworkers.size(), totalExecutions: taskExecutions.size(), totalXaaSInstances: xaasWorkloads, totalKubernetesWorkloads: kubernetesWorkloads]
 		ReportResultRow resultRowRecord = new ReportResultRow(section: ReportResultRow.SECTION_HEADER, displayOrder: displayOrder++, dataMap: data)
         morpheus.report.appendResultRows(reportResult,[resultRowRecord]).blockingGet()
 	}

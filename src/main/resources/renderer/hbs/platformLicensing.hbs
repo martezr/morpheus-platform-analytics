@@ -1,7 +1,7 @@
 <div id="hypervisor-inventory-report">
 	<table>
 		<thead>
-		<th>Item</th>
+		<th>Element</th>
 		<th>Quantity</th>
 		</thead>
 		<tbody>
@@ -20,6 +20,10 @@
 			<tr>
 				<td>Kubernetes Workers</td>
 				<td>{{reportdata.header.0.dataMap.totalKubeWorkers}}</td>
+			</tr>
+			<tr>
+				<td>Kubernetes Workloads</td>
+				<td>{{reportdata.header.0.dataMap.totalKubernetesWorkloads}}</td>
 			</tr>
 			<tr>
 				<td>Automation Executions</td>
