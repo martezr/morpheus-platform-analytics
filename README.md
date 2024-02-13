@@ -3,7 +3,10 @@
 Platform Insights analyzes the Morpheus platform to help enterprises better manage their Morpheus installation.
 
 ## Download Plugin
-Download the JAR file for the [latest release](https://github.com/martezr/morpheus-platform-insights/releases/latest) of the platform insights plugin.
+Download the JAR file for platform insights plugin that matches the version of the Morpheus platform that you are running.
+
+* Morpheus 6.3.0 or higher: [https://github.com/martezr/morpheus-platform-insights/releases/tag/v2.0.0](https://github.com/martezr/morpheus-platform-insights/releases/tag/v2.0.0)
+* Morpheus 6.2.7 or lower: [https://github.com/martezr/morpheus-platform-insights/releases/tag/v0.0.1](https://github.com/martezr/morpheus-platform-insights/releases/tag/v0.0.1)
 
 ## Installation
 

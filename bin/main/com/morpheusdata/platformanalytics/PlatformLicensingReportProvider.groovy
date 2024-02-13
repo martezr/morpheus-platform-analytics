@@ -14,11 +14,11 @@ import com.morpheusdata.response.ServiceResponse
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import groovy.util.logging.Slf4j
-import io.reactivex.Observable;
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import groovy.json.*
 import java.text.*;
+import io.reactivex.rxjava3.core.*;
 
 import java.sql.Connection
 
@@ -78,7 +78,7 @@ class PlatformLicensingReportProvider extends AbstractReportProvider {
 
 	void process(ReportResult reportResult) {
 		// Update the status of the report (generating) - https://developer.morpheusdata.com/api/com/morpheusdata/model/ReportResult.Status.html
-		morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.generating).blockingGet();
+		morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.generating).blockingAwait();
 		Long displayOrder = 0
 		List<GroovyRowResult> results = []
 		List<GroovyRowResult> instances = []
@@ -125,9 +125,9 @@ class PlatformLicensingReportProvider extends AbstractReportProvider {
 			}
 			return resultRowRecord
 		}.buffer(50).doOnComplete {
-			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.ready).blockingGet();
+			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.ready).blockingAwait();
 		}.doOnError { Throwable t ->
-			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.failed).blockingGet();
+			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.failed).blockingAwait();
 		}.subscribe {resultRows ->
 			morpheus.report.appendResultRows(reportResult,resultRows).blockingGet()
 		}
@@ -185,14 +185,11 @@ class PlatformLicensingReportProvider extends AbstractReportProvider {
         morpheus.report.appendResultRows(reportResult,[resultRowRecord]).blockingGet()
 	}
 
-	// https://developer.morpheusdata.com/api/com/morpheusdata/core/ReportProvider.html#method.summary
-	// The description associated with the custom report
 	 @Override
 	 String getDescription() {
 		 return "Platform Licensing"
 	 }
 
-	// The category of the custom report
 	 @Override
 	 String getCategory() {
 		 return 'Platform Insights'

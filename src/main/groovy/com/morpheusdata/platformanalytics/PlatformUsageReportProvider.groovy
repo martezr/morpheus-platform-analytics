@@ -14,10 +14,10 @@ import com.morpheusdata.response.ServiceResponse
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import groovy.util.logging.Slf4j
-import io.reactivex.Observable;
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import groovy.json.*
+import io.reactivex.rxjava3.core.Observable
 
 import java.sql.Connection
 
@@ -94,16 +94,13 @@ class PlatformUsageReportProvider extends AbstractReportProvider {
 		}
 		Observable<GroovyRowResult> observable = Observable.fromIterable(results) as Observable<GroovyRowResult>
 		observable.map{ resultRow ->
-			log.info("Mapping resultRow ${resultRow}")
-			println "Mapping resultRow ${resultRow}"
 			Map<String,Object> data = [name: resultRow.name, plugin: resultRow.is_plugin, enabled: resultRow.enabled, integration: resultRow.integration_name, category: resultRow.integration_category]
 			ReportResultRow resultRowRecord = new ReportResultRow(section: ReportResultRow.SECTION_MAIN, displayOrder: displayOrder++, dataMap: data)
-			log.info("resultRowRecord: ${resultRowRecord.dump()}")
 			return resultRowRecord
 		}.buffer(50).doOnComplete {
-			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.ready).blockingGet();
+			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.ready).blockingAwait();
 		}.doOnError { Throwable t ->
-			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.failed).blockingGet();
+			morpheus.report.updateReportResultStatus(reportResult,ReportResult.Status.failed).blockingAwait();
 		}.subscribe {resultRows ->
 			morpheus.report.appendResultRows(reportResult,resultRows).blockingGet()
 		}

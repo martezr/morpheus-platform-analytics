@@ -8,7 +8,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
 group = 'com.morpheusdata'
-version = '0.0.1'
+version = '2.0.0'
 
 sourceCompatibility = '1.11'
 targetCompatibility = '1.11'
@@ -20,9 +20,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.morpheusdata:morpheus-plugin-api:0.14.0'
+    compileOnly 'com.morpheusdata:morpheus-plugin-api:1.0.2'
     compileOnly 'org.codehaus.groovy:groovy-all:2.5.14'
-    compileOnly 'io.reactivex.rxjava2:rxjava:2.2.0'
+	compileOnly 'io.reactivex.rxjava3:rxjava:3.1.8'
     compileOnly "org.slf4j:slf4j-api:1.7.26"
     compileOnly "org.slf4j:slf4j-parent:1.7.26"
 }
@@ -32,15 +32,15 @@ jar {
         attributes(
             'Plugin-Class': 'com.morpheusdata.platforminsights.PlatformInsightsPlugin',
             'Plugin-Version': archiveVersion.get(), // Get version defined in gradle
-            'Morpheus-Name': 'Plugin Name',
-            'Morpheus-Organization': 'My Organization',
-            'Morpheus-Code': 'plugin-code',
-            'Morpheus-Description': 'My Plugin Description',
+            'Morpheus-Name': 'Platform Insights',
+			'Morpheus-Organization': 'morpheus',
+            'Morpheus-Code': 'platform-insights',
+            'Morpheus-Description': 'Plugin for collecting usage information for the Morpheus platform',
             'Morpheus-Logo': 'assets/myplugin.svg',
             'Morpheus-Logo-Dark': 'assets/myplugin-dark.svg',
-            'Morpheus-Labels': 'Plugin, Stuff',
-            'Morpheus-Repo': 'https://github.com/myorg/myrepo',
-            'Morpheus-Min-Appliance-Version': "5.5.2"
+            'Morpheus-Labels': 'Plugin, Telemetry',
+            'Morpheus-Repo': 'https://github.com/martezr/morpheus-platform-insights',
+            'Morpheus-Min-Appliance-Version': "6.3.0"
         )
     }
 }
